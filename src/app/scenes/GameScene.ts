@@ -2,7 +2,13 @@ import * as Phaser from 'phaser';
 
 export class GameScene extends Phaser.Scene {
     // Declaramos los objetos
-    player?: Phaser.GameObjects.Image;
+    player?: any;
+    meteorGroup?: Phaser.Physics.Arcade.Group;
+    meteorTimer?: Phaser.Time.TimerEvent;
+    leftButton?: Phaser.GameObjects.Image;
+    rightButton?: Phaser.GameObjects.Image;
+    isMovingLeft: boolean = false;
+    isMovingRight: boolean = false;
 
     constructor () {
         super('GameScene');
@@ -11,6 +17,11 @@ export class GameScene extends Phaser.Scene {
     preload() {
         //Fondo
         this.load.image('bg', 'assets/imgs/background.png');
+
+        // Controles
+        this.load.image('cFire', 'assets/imgs/cFire.png');
+        this.load.image('cLeft', 'assets/imgs/cLeft.png');
+        this.load.image('cRight', 'assets/imgs/cRight.png');
 
         // Imágenes de la nave
         this.load.image('player', 'assets/imgs/player.png');
@@ -38,8 +49,93 @@ export class GameScene extends Phaser.Scene {
             .setOrigin(0)
             .setDisplaySize(width, height);
 
-        this.player = this.add.image(width/2, height - 100, 'player');
+        // JUGADOR
+        this.player = this.physics.add.image(width/2, height - 200, 'player');
         this.player.setOrigin(0.5, 0.5);
         this.player.setScale(0.7);
+        this.player.setCollideWorldBounds(true);
+
+        // CONTROLES
+        this.leftButton = this.add.image(width - 100, height - 100, 'cLeft').setScale(0.7).setInteractive();
+        this.rightButton = this.add.image(width - 30, height - 100, 'cRight').setScale(0.7).setInteractive();
+        this.add.image(30, height - 100, 'cFire').setScale(0.7).setInteractive();
+
+        this.leftButton.on('pointerdown', () => {
+            this.isMovingLeft = true;
+            this.player?.setTexture('playerLeft');
+        });
+
+        this.leftButton.on('pointerup', () => {
+            this.isMovingLeft = false;
+            this.player?.setTexture('player');
+        });
+        
+        this.leftButton.on('pointerout', () => {
+            this.isMovingLeft = false;
+            this.player?.setTexture('player');
+        });
+        
+        this.rightButton.on('pointerdown', () => {
+            this.isMovingRight = true;
+            this.player?.setTexture('playerRight');
+        });
+        
+        this.rightButton.on('pointerup', () => {
+            this.isMovingRight = false;
+            this.player?.setTexture('player');
+        });
+        
+        this.rightButton.on('pointerout', () => {
+            this.isMovingRight = false;
+            this.player?.setTexture('player');
+        });
+
+        // METEORITOS
+        this.meteorGroup = this.physics.add.group();
+        this.meteorTimer = this.time.addEvent({
+            delay: 1500,
+            callback: this.spawnMeteor,
+            callbackScope: this,
+            loop: true
+        });
+        
+        this.physics.add.overlap(this.player, this.meteorGroup, this.gameOver, undefined, this);
+    }
+
+    override update() {
+        this.meteorGroup!.getChildren().forEach((meteor: Phaser.GameObjects.GameObject) => {
+            const m = meteor as Phaser.Physics.Arcade.Image;
+            if (m.y > this.scale.height + 50) {
+                m.destroy(); // Limpia meteoritos fuera de pantalla
+            }
+        });
+
+        const speed = 300;
+        if (this.player) {
+            if (this.isMovingLeft) {
+                this.player.setVelocityX(-speed);
+            } else if (this.isMovingRight) {
+                this.player.setVelocityX(speed);
+            } else {
+                this.player.setVelocityX(0);
+            }
+        }
+    }
+
+    spawnMeteor() {
+        const meteorKeys = ['bMet1', 'bMet2', 'bMet3', 'sMet1', 'sMet2', 'sMet3'];
+        const key = Phaser.Utils.Array.GetRandom(meteorKeys);
+        
+        const x = Phaser.Math.Between(50, this.scale.width - 50);
+        const y = -50;
+
+        const meteor = this.meteorGroup!.create(x, y, key) as Phaser.Physics.Arcade.Image;
+
+        meteor.setVelocityY(Phaser.Math.Between(100, 150)); // Baja verticalmente
+        meteor.setData('alive', true);
+    }
+
+    gameOver() {
+        this.scene.start('GameOverScene');
     }
 }

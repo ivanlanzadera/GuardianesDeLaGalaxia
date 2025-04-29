@@ -27,6 +27,16 @@ export class HomePage {
       dom: {
         createContainer: true, // NECESARIO para usar input DOM
       },
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: {
+            y: 0,
+            x: 0
+          },
+          debug: false
+        }
+      }
     }
   }
 
