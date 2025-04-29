@@ -1,0 +1,7 @@
+{
+  "name": "GuardianesDeLaGalaxia",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
