@@ -37,8 +37,6 @@
 
 ## 🧪 Capturas de Pantalla
 
-> *(Puedes sustituir los siguientes ejemplos por imágenes reales del juego una vez subidas al repositorio o servicio externo como Imgur o GitHub)*
-
 ### Pantalla de Inicio  
 ![Start Scene](imgs/inicio.png)
 
