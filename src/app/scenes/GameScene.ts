@@ -12,6 +12,8 @@ export class GameScene extends Phaser.Scene {
     laserGroup?: Phaser.Physics.Arcade.Group;
     fireButton?: Phaser.GameObjects.Image;
     speedLines?: Phaser.GameObjects.Group;
+    score: number = 0;
+    scoreText?: Phaser.GameObjects.Text;
 
     constructor () {
         super('GameScene');
@@ -61,12 +63,16 @@ export class GameScene extends Phaser.Scene {
         });
 
         // PUNTUACIONES
-        const username = localStorage.getItem('username') || 'Invitado';
+        const username = localStorage.getItem('currentUser') || 'Guest';
         const highscore = parseInt(localStorage.getItem(`highscore_${username}`) || '0', 10);
-
         this.add.text(10, 10, `Highscore: ${highscore}`, {
             fontSize: '24px',
             color: '#ffffff'
+        });
+
+        this.scoreText = this.add.text(10, 40, `Score: ${this.score}`, {
+            fontSize: '24px',
+            color: '#fff'
         });
 
         // JUGADOR
@@ -79,7 +85,7 @@ export class GameScene extends Phaser.Scene {
         this.leftButton = this.add.image(width - 100, height - 100, 'cLeft').setScale(0.7).setInteractive();
         this.rightButton = this.add.image(width - 30, height - 100, 'cRight').setScale(0.7).setInteractive();
         this.fireButton = this.add.image(30, height - 100, 'cFire').setScale(0.7).setInteractive();
-        this.laserGroup = this.physics.add.group(); // Grupo de láseres disparados
+        this.laserGroup = this.physics.add.group();
 
         this.leftButton.on('pointerdown', () => {
             this.isMovingLeft = true;
@@ -203,6 +209,17 @@ export class GameScene extends Phaser.Scene {
 
         if (life <= 0) {
             m.destroy();
+            
+            // Actualizamos score
+            this.score++;
+            this.scoreText?.setText(`Score: ${this.score}`);
+
+            // Comprobamos y actualizamos highscore
+            const username = localStorage.getItem('currentUser');
+            const storedHS = parseInt(localStorage.getItem(`highscore_${username}`) || '0', 10);
+            if (this.score > storedHS) {
+                localStorage.setItem(`highscore_${username}`, this.score.toString());
+            }
         } else {
             m.setData('life', life);
         }

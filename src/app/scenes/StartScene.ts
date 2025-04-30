@@ -105,7 +105,7 @@ export class StartScene extends Phaser.Scene {
             return;
             }
     
-            localStorage.setItem('playerName', playerName);
+            localStorage.setItem('currentUser', playerName);
             // En el futuro puedes también inicializar aquí un array de puntuaciones si no existe
             this.scene.start('GameScene');
         });
