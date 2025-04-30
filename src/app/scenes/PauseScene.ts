@@ -1,5 +1,4 @@
 import * as Phaser from 'phaser';
-import { GameScene } from './GameScene';
 
 export class PauseScene extends Phaser.Scene {
     constructor() {

@@ -1,5 +1,4 @@
 import * as Phaser from 'phaser';
-import { PauseScene } from './PauseScene';
 
 export class GameScene extends Phaser.Scene {
     // Declaramos los objetos y variables
@@ -15,6 +14,7 @@ export class GameScene extends Phaser.Scene {
     speedLines?: Phaser.GameObjects.Group;
     score: number = 0;
     scoreText?: Phaser.GameObjects.Text;
+    music: any;
 
     constructor () {
         super('GameScene');
@@ -50,9 +50,28 @@ export class GameScene extends Phaser.Scene {
 
         // Fuente
         document.fonts.load('20px kenvector');
+
+        // Musica
+        this.load.audio('gameMusic', 'assets/sound/gameMusic.mp3');
+
+        // Efectos de sonido
+        this.load.audio('shotSound', 'assets/sound/laserShot.wav');
+        this.load.audio('explosion', 'assets/sound/explosion.wav');
     }
 
     create() {
+        const prevMusic = this.sound.get('gameMusic');
+        if (prevMusic) {
+            prevMusic.stop();
+            this.sound.remove(prevMusic);
+        }
+
+        this.music = this.sound.add('gameMusic', {
+            loop: true,
+            volume: 0.1
+        });
+        this.music.play();
+
         const { width, height } = this.scale;
         this.score = 0;
 
@@ -191,6 +210,9 @@ export class GameScene extends Phaser.Scene {
         const laser = this.laserGroup.create(this.player.x, this.player.y - this.player.height / 2, 'laser') as Phaser.Physics.Arcade.Image;
         laser.setVelocityY(-500);
         laser.setData('alive', true);
+
+        // Sonido del laser
+        this.sound.play('shotSound');
     
         // Efecto óptico del disparo
         const shoot = this.add.image(this.player.x, this.player.y - this.player.height / 2, 'shot').setScale(0.5);
@@ -219,6 +241,9 @@ export class GameScene extends Phaser.Scene {
 
         if (life <= 0) {
             m.destroy();
+
+            // Sonido de explosion
+            this.sound.play('explosion', { volume: 0.2 });
             
             // Actualizamos score
             this.score++;
@@ -249,6 +274,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     gameOver() {
+        this.music.stop();
         localStorage.setItem('score', this.score.toString());
         this.scene.start('GameOverScene');
     }

@@ -6,14 +6,26 @@ export class StartScene extends Phaser.Scene {
     }
 
     preload() {
+        // Imagenes
         this.load.image('bg', 'assets/imgs/background.png');
         this.load.image('nave', 'assets/imgs/player.png');
         this.load.image('bMet1', 'assets/imgs/met_1_1.png');
         this.load.image('bMet3', 'assets/imgs/met_1_3.png');
+
+        // Fuente
         document.fonts.load('20px kenvector');
+
+        // Musica
+        this.load.audio('music', 'assets/sound/mainMenu.mp3');
     }
 
     create() {
+        const music = this.sound.add('music', {
+            loop: true,
+            volume: 0.1
+        });
+
+        music.play();
 
         const { width, height } = this.scale;
 
@@ -102,6 +114,7 @@ export class StartScene extends Phaser.Scene {
                 alert('Por favor, introduce un nombre.');
                 return;
             }
+            music.stop();
             localStorage.setItem('currentUser', playerName);
             this.scene.start('GameScene');
         });

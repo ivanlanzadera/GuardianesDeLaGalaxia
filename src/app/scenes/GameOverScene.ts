@@ -16,9 +16,19 @@ export class GameOverScene extends Phaser.Scene {
 
         // Fuente
         document.fonts.load('20px kenvector');
+
+        // Musica
+        this.load.audio('gameoverMenu', 'assets/sound/gameoverMenu.flac');
     }
 
     create() {
+        const music = this.sound.add('gameoverMenu', {
+            loop: true,
+            volume: 0.1
+        });
+
+        music.play();
+
         const { width, height } = this.scale;
 
         // FONDO
@@ -94,22 +104,24 @@ export class GameOverScene extends Phaser.Scene {
         };
 
         const playAgainBtn = createButton(width / 2, panelY + panelHeight - padding - 70, 0x4CAF50, 'Play Again', () => {
+            music.stop();
             this.scene.start('GameScene');
         });
 
         const menuBtn = createButton(width / 2, panelY + panelHeight - padding - 10, 0xF44336, 'Back to Menu', () => {
+            music.stop();
             this.scene.start('StartScene');
         });
 
         // Imágenes de meteoritos y nave encima del panel
-        const meteorSize = 75; // Tamaño del meteorito
+        const meteorSize = 90; // Tamaño del meteorito
         const naveSize = 125;   // Tamaño de la nave
 
         // Meteorito izquierdo
-        const meteorLeft = this.add.image(panelX + 85, panelY - meteorSize / 4, 'bMet1').setDisplaySize(meteorSize, meteorSize);
+        const meteorLeft = this.add.image(panelX + 85, panelY - meteorSize / 8, 'bMet1').setDisplaySize(meteorSize, meteorSize);
 
         // Meteorito derecho
-        const meteorRight = this.add.image(panelX + panelWidth - 85, panelY - meteorSize / 4, 'bMet2').setDisplaySize(meteorSize, meteorSize);
+        const meteorRight = this.add.image(panelX + panelWidth - 85, panelY - meteorSize / 8, 'bMet2').setDisplaySize(meteorSize, meteorSize);
         
         // Nave en el centro
         const nave = this.add.image(width / 2, panelY - naveSize / 4, 'nave').setDisplaySize(naveSize, naveSize);
