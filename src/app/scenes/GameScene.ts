@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { PauseScene } from './PauseScene';
 
 export class GameScene extends Phaser.Scene {
     // Declaramos los objetos y variables
@@ -28,6 +29,7 @@ export class GameScene extends Phaser.Scene {
         this.load.image('cFire', 'assets/imgs/cFire.png');
         this.load.image('cLeft', 'assets/imgs/cLeft.png');
         this.load.image('cRight', 'assets/imgs/cRight.png');
+        this.load.image('pause', 'assets/imgs/pause.png');
 
         // Imágenes de la nave
         this.load.image('player', 'assets/imgs/player.png');
@@ -87,6 +89,8 @@ export class GameScene extends Phaser.Scene {
         this.rightButton = this.add.image(width - 30, height - 100, 'cRight').setScale(0.7).setInteractive();
         this.fireButton = this.add.image(30, height - 100, 'cFire').setScale(0.7).setInteractive();
         this.laserGroup = this.physics.add.group();
+        const pauseButton = this.add.image(width - 30, 50, 'pause').setOrigin(0.5).setScale(0.7).setInteractive();
+        pauseButton.on('pointerdown', this.togglePause, this);
 
         this.leftButton.on('pointerdown', () => {
             this.isMovingLeft = true;
@@ -192,7 +196,7 @@ export class GameScene extends Phaser.Scene {
         const x = Phaser.Math.Between(0, this.scale.width);
         const y = -50;
 
-        const speedLine = this.add.image(x, y, 'speed').setAlpha(1.2).setScale(1.5).setDepth(1);;
+        const speedLine = this.add.image(x, y, 'speed').setAlpha(1.2).setScale(1.5).setDepth(1);
 
         this.speedLines?.add(speedLine);
     }
@@ -242,5 +246,10 @@ export class GameScene extends Phaser.Scene {
     gameOver() {
         localStorage.setItem('score', this.score.toString());
         this.scene.start('GameOverScene');
+    }
+
+    togglePause() {
+        this.scene.pause(); // Pausa el juego
+        this.scene.launch('PauseScene'); // Lanza el menú
     }
 }

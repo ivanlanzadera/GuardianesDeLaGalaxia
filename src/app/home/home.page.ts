@@ -5,6 +5,7 @@ import * as Phaser from 'phaser';
 import { StartScene } from '../scenes/StartScene';
 import { GameScene } from '../scenes/GameScene';
 import { GameOverScene } from '../scenes/GameOverScene';
+import { PauseScene } from '../scenes/PauseScene';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,7 @@ export class HomePage {
       width: innerWidth,
       height: innerHeight,
       parent: "game",
-      scene: [StartScene, GameScene, GameOverScene],
+      scene: [StartScene, GameScene, GameOverScene, PauseScene],
       type: Phaser.AUTO,
       dom: {
         createContainer: true, // NECESARIO para usar input DOM
