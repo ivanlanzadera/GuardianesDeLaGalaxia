@@ -7,6 +7,10 @@ export class StartScene extends Phaser.Scene {
 
     preload() {
         this.load.image('bg', 'assets/imgs/background.png');
+        this.load.image('nave', 'assets/imgs/player.png');
+        this.load.image('bMet1', 'assets/imgs/met_1_1.png');
+        this.load.image('bMet3', 'assets/imgs/met_1_3.png');
+        document.fonts.load('20px kenvector');
     }
 
     create() {
@@ -14,100 +18,106 @@ export class StartScene extends Phaser.Scene {
         const { width, height } = this.scale;
 
         // FONDO
-        const bg = this.add.image(0, 0, 'bg')
-            .setOrigin(0)
-            .setDisplaySize(width, height);
+        const bg = this.add.image(width / 2, height / 2, 'bg').setDisplaySize(width, height);
+        this.add.rectangle(0, 0, width, height, 0x000000, 0.5).setOrigin(0);
 
         // TÍTULO
         this.add.text(width / 2, height * 0.1, 'Guardianes de la Galaxia', {
-            fontSize: `${Math.floor(height * 0.03)}px`,
+            fontSize: `${Math.floor(height * 0.025)}px`,
             color: '#ffffff',
-            fontFamily: 'Arial Black',
+            fontFamily: 'kenvector',
             align: 'center',
           }).setOrigin(0.5);
 
         // PANEL DE FONDO
-        const panelWidth = width * 0.8;
-        const panelHeight = height * 0.4;
-        const panelX = (width - panelWidth) / 2;
-        const panelY = height * 0.25;
+        const panelMargin = 60;
+        const panelWidth = width - panelMargin * 2;
+        const panelHeight = 350;
+        const panelX = panelMargin;
+        const panelY = height / 2 - panelHeight / 2;
 
         const panel = this.add.graphics();
-        panel.fillStyle(0x7e5a8c, 0.8);
-        panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 20);
+        panel.fillStyle(0xcccccc, 1);
+        panel.lineStyle(4, 0xffffff, 1);
+        panel.fillRoundedRect(panelX, panelY, panelWidth, panelHeight, 30);
+        panel.strokeRoundedRect(panelX, panelY, panelWidth, panelHeight, 30);
 
         // Texto de nombre
-        this.add.text(width / 2, panelY + 30, 'Introduce tu nombre:', {
-            fontSize: `${Math.floor(height * 0.03)}px`,
-            color: '#ffffff',
-            fontFamily: 'Arial',
+        this.add.text(width / 2, panelY + 100, 'Enter your name', {
+            fontSize: '20px',
+            fontFamily: 'kenvector',
+            color: '#333333',
         }).setOrigin(0.5);
   
         // Input HTML (con DOMElement)
         const input = document.createElement('input');
         input.type = 'text';
-        input.placeholder = 'Tu nombre';
+        input.placeholder = 'Player name...';
+        input.style.fontFamily = 'kenvector';
         input.style.padding = '10px';
         input.style.fontSize = '18px';
-        input.style.borderRadius = '8px';
-        input.style.border = '2px solid #ffffff';
+        input.style.borderRadius = '2px';
+        input.style.border = '2px solid #888';
         input.style.outline = 'none';
-        input.style.width = '70%';
+        input.style.width = '60%';
         input.style.height = '40px';
-        input.style.position = 'absolute';
-        input.style.zIndex = '2';
-        input.style.transform = 'translateX(-50%)';
-        input.style.background = '#b895d5';
-        input.style.color = '#ffffff';
-        input.style.fontWeight = 'bold';
         input.style.textAlign = 'center';
-        input.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.4)';
+        input.style.background = '#eeeeee';
+        input.style.color = '#333';
+        input.style.fontWeight = 'bold';
+        input.style.position = 'absolute';
     
-        const inputElement = this.add.dom(width / 2, panelY + 80, input);
+        const inputElement = this.add.dom(width / 2, panelY + 150, input);
     
         // Botón
-        const buttonWidth = width * 0.5;
-        const buttonHeight = height * 0.08;
-        const buttonX = (width - buttonWidth) / 2;
-        const buttonY = panelY + panelHeight - buttonHeight - 20;
-    
-        const button = this.add.graphics();
-        button.fillStyle(0x9f7ebd, 1);
-        button.fillRoundedRect(buttonX, buttonY, buttonWidth, buttonHeight, 15);
-    
-        const text = this.add.text(width / 2, buttonY + buttonHeight / 2, 'JUGAR', {
-            fontSize: `${Math.floor(height * 0.035)}px`,
+        const buttonWidth = 200;
+        const buttonHeight = 50;
+        const buttonY = panelY + panelHeight - 60;
+
+        const buttonContainer = this.add.container(width / 2, buttonY);
+        const buttonBg = this.add.rectangle(0, 0, buttonWidth, buttonHeight, 0x4CAF50, 1)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+
+        const buttonText = this.add.text(0, 0, 'PLAY', {
+            fontSize: '20px',
+            fontFamily: 'kenvector',
             color: '#ffffff',
-            fontFamily: 'Arial',
+            fontStyle: 'bold',
         }).setOrigin(0.5);
-    
-        const hitArea = this.add.zone(buttonX, buttonY, buttonWidth, buttonHeight)
-            .setOrigin(0)
-            .setInteractive();
-    
-        // Hover
-        hitArea.on('pointerover', () => {
-            button.clear();
-            button.fillStyle(0xb895d5, 1);
-            button.fillRoundedRect(buttonX, buttonY, buttonWidth, buttonHeight, 15);
+
+        buttonContainer.add([buttonBg, buttonText]);
+
+        buttonBg.on('pointerover', () => {
+            buttonBg.setFillStyle(0x66BB6A);
         });
-        hitArea.on('pointerout', () => {
-            button.clear();
-            button.fillStyle(0x9f7ebd, 1);
-            button.fillRoundedRect(buttonX, buttonY, buttonWidth, buttonHeight, 15);
+
+        buttonBg.on('pointerout', () => {
+            buttonBg.setFillStyle(0x4CAF50);
         });
-    
-        // Click
-        hitArea.on('pointerdown', () => {
+
+        buttonBg.on('pointerdown', () => {
             const playerName = input.value.trim();
             if (!playerName) {
-            alert('Por favor, introduce un nombre.');
-            return;
+                alert('Por favor, introduce un nombre.');
+                return;
             }
-    
             localStorage.setItem('currentUser', playerName);
-            // En el futuro puedes también inicializar aquí un array de puntuaciones si no existe
             this.scene.start('GameScene');
         });
+
+
+        // Imágenes de meteoritos y nave encima del panel
+        const meteorSize = 90; // Tamaño del meteorito
+        const naveSize = 125;   // Tamaño de la nave
+
+        // Meteorito izquierdo
+        const meteorLeft = this.add.image(panelX + 85, panelY + 20, 'bMet3').setDisplaySize(meteorSize, meteorSize);
+
+        // Meteorito derecho
+        const meteorRight = this.add.image(panelX + panelWidth - 85, panelY + 20, 'bMet1').setDisplaySize(meteorSize, meteorSize);
+        
+        // Nave en el centro
+        const nave = this.add.image(width / 2, panelY, 'nave').setDisplaySize(naveSize, naveSize);
     }
 }

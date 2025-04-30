@@ -6,10 +6,16 @@ export class GameOverScene extends Phaser.Scene {
     }
 
     preload() {
+        //Fondo
         this.load.image('background', 'assets/imgs/background.png');
+
+        // Imagenes
         this.load.image('nave', 'assets/imgs/player.png');
         this.load.image('bMet1', 'assets/imgs/met_1_1.png');
         this.load.image('bMet2', 'assets/imgs/met_1_2.png');
+
+        // Fuente
+        document.fonts.load('20px kenvector');
     }
 
     create() {
@@ -36,7 +42,8 @@ export class GameOverScene extends Phaser.Scene {
         // Score del usuario
         const userScore = parseInt(localStorage.getItem('score') || '0', 10);
         const scoreText = this.add.text(width / 2, panelY + padding + 30, `Your Score: ${userScore}`, {
-            fontSize: '22px',
+            fontFamily: 'kenvector',
+            fontSize: '20px',
             color: '#111111',
             fontStyle: 'bold',
         }).setOrigin(0.5);
@@ -46,8 +53,9 @@ export class GameOverScene extends Phaser.Scene {
 
         // Título de Highscores
         this.add.text(width / 2, panelY + padding + scoreText.height + spaceAfterUserScore, 'Highscores', {
-            fontSize: '24px',
-            color: '#333333',
+            fontFamily: 'kenvector',
+            fontSize: '20px',
+            color: '#111111',
             fontStyle: 'bold',
         }).setOrigin(0.5);
 
@@ -55,7 +63,8 @@ export class GameOverScene extends Phaser.Scene {
         const scores = this.getTopScores();
         scores.forEach((entry, i) => {
             this.add.text(width / 2, panelY + padding + scoreText.height + spaceAfterUserScore + (i + 1) * 35, `${i + 1}. ${entry.username}: ${entry.score}`, {
-                fontSize: '20px',
+                fontFamily: 'kenvector',
+                fontSize: '16px',
                 color: '#222222',
             }).setOrigin(0.5);
         });
@@ -72,7 +81,8 @@ export class GameOverScene extends Phaser.Scene {
                 .setInteractive({ useHandCursor: true });
 
             const label = this.add.text(0, 0, text, {
-                fontSize: '20px',
+                fontFamily: 'kenvector',
+                fontSize: '18px',
                 color: '#ffffff',
                 fontStyle: 'bold',
             }).setOrigin(0.5);

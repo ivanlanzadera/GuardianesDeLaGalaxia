@@ -47,6 +47,9 @@ export class GameScene extends Phaser.Scene {
         this.load.image('sMet1', 'assets/imgs/met_2_1.png');
         this.load.image('sMet2', 'assets/imgs/met_2_2.png');
         this.load.image('sMet3', 'assets/imgs/met_2_3.png');
+
+        // Fuente
+        document.fonts.load('20px kenvector');
     }
 
     create() {
@@ -69,13 +72,15 @@ export class GameScene extends Phaser.Scene {
         const username = localStorage.getItem('currentUser') || 'Guest';
         const highscore = parseInt(localStorage.getItem(`highscore_${username}`) || '0', 10);
         this.add.text(10, 10, `Highscore: ${highscore}`, {
-            fontSize: '24px',
+            fontFamily: 'kenvector',
+            fontSize: '16px',
             color: '#ffffff'
         });
 
         this.scoreText = this.add.text(10, 40, `Score: ${this.score}`, {
-            fontSize: '24px',
-            color: '#fff'
+            fontFamily: 'kenvector',
+            fontSize: '16px',
+            color: '#ffffff'
         });
 
         // JUGADOR
