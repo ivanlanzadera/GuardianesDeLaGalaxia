@@ -56,14 +56,18 @@
 1. Clona el repositorio:
 ```bash
 git clone <URL_DEL_REPOSITORIO>
-cd guardianes-de-la-galaxia```
+cd guardianes-de-la-galaxia
+```
 
 2. Instala dependencias:
 ```bash
-    npm install```
+    npm install
+```
+
 3. Inicia la aplicación en desarrollo:
 ```bash
-ionic serve```
+ionic serve
+```
 
 ---
 
