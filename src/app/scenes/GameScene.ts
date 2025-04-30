@@ -49,6 +49,7 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale;
+        this.score = 0;
 
         // FONDO
         const bg = this.add.image(0, 0, 'bg').setOrigin(0).setDisplaySize(width, height).setDepth(0);
@@ -239,6 +240,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     gameOver() {
+        localStorage.setItem('score', this.score.toString());
         this.scene.start('GameOverScene');
     }
 }
