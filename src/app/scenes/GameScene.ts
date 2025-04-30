@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 
 export class GameScene extends Phaser.Scene {
-    // Declaramos los objetos
+    // Declaramos los objetos y variables
     player?: any;
     meteorGroup?: Phaser.Physics.Arcade.Group;
     meteorTimer?: Phaser.Time.TimerEvent;
@@ -11,6 +11,7 @@ export class GameScene extends Phaser.Scene {
     isMovingRight: boolean = false;
     laserGroup?: Phaser.Physics.Arcade.Group;
     fireButton?: Phaser.GameObjects.Image;
+    speedLines?: Phaser.GameObjects.Group;
 
     constructor () {
         super('GameScene');
@@ -19,6 +20,7 @@ export class GameScene extends Phaser.Scene {
     preload() {
         //Fondo
         this.load.image('bg', 'assets/imgs/background.png');
+        this.load.image('speed', 'assets/imgs/speed.png');
 
         // Controles
         this.load.image('cFire', 'assets/imgs/cFire.png');
@@ -47,7 +49,16 @@ export class GameScene extends Phaser.Scene {
         const { width, height } = this.scale;
 
         // FONDO
-        const bg = this.add.image(0, 0, 'bg').setOrigin(0).setDisplaySize(width, height);
+        const bg = this.add.image(0, 0, 'bg').setOrigin(0).setDisplaySize(width, height).setDepth(0);
+
+        // EFECTO DE VELOCIDAD
+        this.speedLines = this.add.group();
+        this.time.addEvent({
+            delay: 800,
+            callback: this.spawnSpeedLine,
+            callbackScope: this,
+            loop: true
+        });
 
         // PUNTUACIONES
         const username = localStorage.getItem('username') || 'Invitado';
@@ -118,6 +129,17 @@ export class GameScene extends Phaser.Scene {
     }
 
     override update() {
+        // Animamos las líneas de velocidad
+        this.speedLines?.getChildren().forEach((line: Phaser.GameObjects.GameObject) => {
+            const speedLine = line as Phaser.GameObjects.Image;
+            speedLine.y += 10; // velocidad de descenso
+        
+            // Eliminar si sale de la pantalla
+            if (speedLine.y > this.scale.height + 50) {
+                speedLine.destroy();
+            }
+        });
+
         // Eliminamos meteoritos que salen de la pantalla
         this.meteorGroup!.getChildren().forEach((meteor: Phaser.GameObjects.GameObject) => {
             const m = meteor as Phaser.Physics.Arcade.Image;
@@ -157,6 +179,15 @@ export class GameScene extends Phaser.Scene {
         // Efecto óptico del disparo
         const shoot = this.add.image(this.player.x, this.player.y - this.player.height / 2, 'shot').setScale(0.5);
         this.time.delayedCall(100, () => shoot.destroy(), [], this);
+    }
+
+    spawnSpeedLine() {
+        const x = Phaser.Math.Between(0, this.scale.width);
+        const y = -50;
+
+        const speedLine = this.add.image(x, y, 'speed').setAlpha(1.2).setScale(1.5).setDepth(1);;
+
+        this.speedLines?.add(speedLine);
     }
 
     shotMeteor(laser: any, meteor: any) {
