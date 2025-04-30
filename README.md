@@ -61,7 +61,7 @@ cd guardianes-de-la-galaxia
 
 2. Instala dependencias:
 ```bash
-    npm install
+npm install
 ```
 
 3. Inicia la aplicación en desarrollo:
